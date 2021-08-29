@@ -33,6 +33,7 @@ namespace CompanyEmployees
         {
             services.AddControllers();
             services.ConfigureCors();
+            services.ConfigureLoggerService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
