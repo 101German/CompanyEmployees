@@ -26,7 +26,7 @@ namespace CompanyEmployees.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("CompanyId");
 
-                    b.Property<string>("Adress")
+                    b.Property<string>("Address")
                         .IsRequired()
                         .HasMaxLength(60)
                         .HasColumnType("nvarchar(60)");

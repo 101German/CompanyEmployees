@@ -13,7 +13,7 @@ namespace CompanyEmployees.Migrations
                 {
                     CompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
-                    Adress = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CompanyEmployees.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20210901120902_DatabaseCreation")]
+    [Migration("20210901181059_DatabaseCreation")]
     partial class DatabaseCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,7 +28,7 @@ namespace CompanyEmployees.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("CompanyId");
 
-                    b.Property<string>("Adress")
+                    b.Property<string>("Address")
                         .IsRequired()
                         .HasMaxLength(60)
                         .HasColumnType("nvarchar(60)");
