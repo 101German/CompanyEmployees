@@ -21,6 +21,7 @@ namespace CompanyEmployees.Extensions
            services.AddScoped<ILoggerManager, LoggerManager>();
 
         public static void ConfigureSqlContext(this IServiceCollection services,IConfiguration configuration) =>
-           services.AddDbContext<RepositoryContext>(opts => opts.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
+           services.AddDbContext<RepositoryContext>(opts => opts.UseSqlServer(configuration.GetConnectionString("sqlConnection")
+               ,b=>b.MigrationsAssembly("CompanyEmployees")));
     }
 }
