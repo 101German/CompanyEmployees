@@ -10,6 +10,6 @@ namespace Entities.DataTransferObfects
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string FullAdress { get; set; }
+        public string FullAddress { get; set; }
     }
 }
