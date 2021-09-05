@@ -37,8 +37,8 @@ namespace CompanyEmployees
             services.ConfigureSqlContext(Configuration);
             services.AddControllers(config =>
             {
-
-                config.RespectBrowserAcceptHeader = true;
+              config.RespectBrowserAcceptHeader = true;
+              config.ReturnHttpNotAcceptable = true;
             }).AddXmlDataContractSerializerFormatters();
             services.ConfigureCors();
             services.ConfigureLoggerService();
