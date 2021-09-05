@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Entities.DataTransferObfects;
+using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,7 +18,7 @@ namespace CompanyEmployees.Controllers
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
-        public CompaniesController(IRepositoryManager repository, ILoggerManager logger,IMapper mapper)
+        public CompaniesController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
         {
             _repository = repository;
             _logger = logger;
@@ -26,15 +27,15 @@ namespace CompanyEmployees.Controllers
         [HttpGet]
         public IActionResult GetCompanies()
         {
-         
-                var companies = _repository.Company.GetAllCompanies(trackChanges: false);
-                var companiesDTO = _mapper.Map<IEnumerable<CompanyDTO>>(companies);
-                return Ok(companiesDTO);
-           
-               
-            
+
+            var companies = _repository.Company.GetAllCompanies(trackChanges: false);
+            var companiesDTO = _mapper.Map<IEnumerable<CompanyDTO>>(companies);
+            return Ok(companiesDTO);
+
+
+
         }
-        [HttpGet("{id}",Name ="CompanyById")]
+        [HttpGet("{id}", Name = "CompanyById")]
         public IActionResult GetCompany(Guid id)
         {
             var company = _repository.Company.GetCompany(id, trackChanges: false);
@@ -48,6 +49,22 @@ namespace CompanyEmployees.Controllers
                 var companyDTO = _mapper.Map<CompanyDTO>(company);
                 return Ok(companyDTO);
             }
+        }
+
+        [HttpPost]
+        public IActionResult CreateCompany([FromBody] CompanyForCreationDTO company)
+        {
+            if (company == null)
+            {
+                _logger.LogError("CompanyForCreationDto object sent from client is null.");
+                return BadRequest("CompanyForCreationDto object is null");
+            }
+            var companyEntity = _mapper.Map<Company>(company);
+            _repository.Company.CreateCompany(companyEntity);
+            _repository.Save();
+            var companyToReturn = _mapper.Map<CompanyDTO>(companyEntity);
+            return CreatedAtRoute("CompanyById", new { id = companyToReturn.Id },companyToReturn);
+
         }
 
     }
