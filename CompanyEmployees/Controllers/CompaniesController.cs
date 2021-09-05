@@ -87,5 +87,28 @@ namespace CompanyEmployees.Controllers
 
         }
 
+        [HttpPost("collection")]
+        public IActionResult CreateCompanyCollection([FromBody] IEnumerable<CompanyForCreationDTO> companyCollection)
+        {
+            if (companyCollection == null)
+            {
+                _logger.LogError("Company collection sent from client is null.");
+                return BadRequest("Company collection is null");
+            }
+
+            var companyEntities = _mapper.Map<IEnumerable<Company>>(companyCollection);
+            foreach(var company in companyEntities)
+            {
+                _repository.Company.CreateCompany(company);
+            }
+
+            _repository.Save();
+
+            var companyCollectionToReturn = _mapper.Map<IEnumerable<CompanyDTO>>(companyEntities);
+            var ids = string.Join(",", companyCollectionToReturn.Select(c => c.Id));
+
+            return CreatedAtRoute("CompanyCollection", new { ids }, companyCollectionToReturn);
+        }
+
     }
 }
