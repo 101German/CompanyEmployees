@@ -50,6 +50,26 @@ namespace CompanyEmployees.Controllers
                 return Ok(companyDTO);
             }
         }
+        [HttpGet("collection/({ids})",Name ="CompanyCollection")]
+        public IActionResult GetCompanyCollection(IEnumerable<Guid> ids)
+        {
+            if(ids == null)
+            {
+                _logger.LogError("Parametr ids is null");
+                return BadRequest("Parameter ids is null");
+            }
+
+            var companyEntities = _repository.Company.GetByIds(ids, trackChanges: false);
+
+            if(ids.Count()!= companyEntities.Count())
+            {
+                _logger.LogError("Some ids are not valid in a collection");
+                return NotFound();
+            }
+
+            var companiesToReturn = _mapper.Map<IEnumerable<CompanyDTO>>(companyEntities);
+            return Ok(companiesToReturn);
+        }
 
         [HttpPost]
         public IActionResult CreateCompany([FromBody] CompanyForCreationDTO company)
