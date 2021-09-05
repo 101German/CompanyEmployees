@@ -39,7 +39,8 @@ namespace CompanyEmployees
             {
               config.RespectBrowserAcceptHeader = true;
               config.ReturnHttpNotAcceptable = true;
-            }).AddXmlDataContractSerializerFormatters();
+            }).AddXmlDataContractSerializerFormatters()
+            .AddCustomCSVFormatter();
             services.ConfigureCors();
             services.ConfigureLoggerService();
         }
