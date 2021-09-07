@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace CompanyEmployees.Controllers
 {
@@ -173,7 +171,15 @@ namespace CompanyEmployees.Controllers
 
             var employeeToPatch = _mapper.Map<EmployeeForUpdateDTO>(employeeEntity);
 
-            patchDoc.ApplyTo(employeeToPatch);
+            patchDoc.ApplyTo(employeeToPatch,ModelState);
+
+            if (!ModelState.IsValid)
+            {
+
+                _logger.LogError("Invalid model state for the patch document");
+                return UnprocessableEntity(ModelState);
+
+            }
 
             _mapper.Map(employeeToPatch, employeeEntity);
 
