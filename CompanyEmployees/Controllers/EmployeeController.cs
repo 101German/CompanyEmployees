@@ -134,7 +134,7 @@ namespace CompanyEmployees.Controllers
 
             return NoContent();
         }
-
+        [HttpPatch("{id}")]
         public IActionResult PartiallyUpdateForCompany(Guid companyId,Guid id,[FromBody] JsonPatchDocument<EmployeeForUpdateDTO> patchDoc)
         {
             if(patchDoc == null)
