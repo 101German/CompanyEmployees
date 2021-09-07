@@ -173,6 +173,8 @@ namespace CompanyEmployees.Controllers
 
             patchDoc.ApplyTo(employeeToPatch,ModelState);
 
+            TryValidateModel(employeeToPatch);
+
             if (!ModelState.IsValid)
             {
 
