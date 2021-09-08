@@ -34,7 +34,7 @@ namespace CompanyEmployees.Controllers
                 _logger.LogInfo($"Company with id: {companyId} doesn't exist in the  database.");
                 return NotFound();
             }
-            var employeesFromDB = _repository.Employee.GetEmployees(companyId, trackChanges:false);
+            var employeesFromDB =await _repository.Employee.GetEmployeesAsync(companyId, trackChanges:false);
             var employeesDTO = _mapper.Map<IEnumerable<EmployeeDTO>>(employeesFromDB);
             return Ok(employeesDTO);
 
@@ -48,7 +48,7 @@ namespace CompanyEmployees.Controllers
                 _logger.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
             return NotFound();
             }
-            var employeeDb = _repository.Employee.GetEmployee(companyId, id, trackChanges:false);
+            var employeeDb =await _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges:false);
             if (employeeDb == null)
             {
                 _logger.LogInfo($"Employee with id: {id} doesn't exist in the database.");
@@ -99,7 +99,7 @@ namespace CompanyEmployees.Controllers
                 return NotFound();
             }
 
-            var employeeForCompany = _repository.Employee.GetEmployee(companyId, id, trackChanges: false);
+            var employeeForCompany =await _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges: false);
             if(employeeForCompany == null)
             {
                 _logger.LogInfo($"Employee with id:{id} doesn't exist in the database.");
@@ -134,7 +134,7 @@ namespace CompanyEmployees.Controllers
                 return NotFound();
             }
 
-            var employeeEntity = _repository.Employee.GetEmployee(companyId, id, trackChanges: true);
+            var employeeEntity =await _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges: true);
             if(employeeEntity == null)
             {
                 _logger.LogInfo($"Employee with id:{id} doesn-t exist in the database");
@@ -162,7 +162,7 @@ namespace CompanyEmployees.Controllers
                 return NotFound();
             }
 
-            var employeeEntity = _repository.Employee.GetEmployee(companyId, id, trackChanges:true);
+            var employeeEntity =await _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges:true);
             if (employeeEntity == null)
             {
                 _logger.LogInfo($"Employee with id: {id} doesn't exist in the database.");
