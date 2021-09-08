@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CompanyEmployees.ActionFilters;
 using CompanyEmployees.ModelBinders;
 using Contracts;
 using Entities.DataTransferObfects;
@@ -73,13 +74,10 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDTO company)
         {
-            if (company == null)
-            {
-                _logger.LogError("CompanyForCreationDto object sent from client is null.");
-                return BadRequest("CompanyForCreationDto object is null");
-            }
+          
             var companyEntity = _mapper.Map<Company>(company);
             _repository.Company.CreateCompany(companyEntity);
             await _repository.SaveAsync();
@@ -89,13 +87,9 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpPost("collection")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateCompanyCollection([FromBody] IEnumerable<CompanyForCreationDTO> companyCollection)
         {
-            if (companyCollection == null)
-            {
-                _logger.LogError("Company collection sent from client is null.");
-                return BadRequest("Company collection is null");
-            }
 
             var companyEntities = _mapper.Map<IEnumerable<Company>>(companyCollection);
             foreach(var company in companyEntities)
@@ -109,6 +103,7 @@ namespace CompanyEmployees.Controllers
             var ids = string.Join(",", companyCollectionToReturn.Select(c => c.Id));
 
             return CreatedAtRoute("CompanyCollection", new { ids }, companyCollectionToReturn);
+
         }
 
         [HttpDelete("{id}")]
@@ -128,13 +123,9 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateCompany(Guid id,[FromBody] CompanyForUpdateDTO company)
         {
-            if(company == null)
-            {
-                _logger.LogError("CompanyForUpdateDTO object sent from client is null.");
-                return BadRequest("CompanyForUpdate object is null");
-            }
 
             var companyEntity =await _repository.Company.GetCompanyAsync(id, trackChanges: true);
             if (company == null)
