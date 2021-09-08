@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CompanyEmployees.ActionFilters;
 using Contracts;
 using Entities.DataTransferObfects;
 using Entities.Models;
@@ -27,7 +28,6 @@ namespace CompanyEmployees.Controllers
         [HttpGet]
         public async Task<IActionResult> GetEmployees(Guid companyId)
         {
-
             var company =await _repository.Company.GetCompanyAsync(companyId, trackChanges:false);
             if (company == null)
             {
@@ -37,7 +37,6 @@ namespace CompanyEmployees.Controllers
             var employeesFromDB =await _repository.Employee.GetEmployeesAsync(companyId, trackChanges:false);
             var employeesDTO = _mapper.Map<IEnumerable<EmployeeDTO>>(employeesFromDB);
             return Ok(employeesDTO);
-
         }
         [HttpGet("{id}", Name = "GetEmployeeForCompany")]
         public async Task<IActionResult> GetEmployeeForCompany(Guid companyId, Guid id)
@@ -58,21 +57,9 @@ namespace CompanyEmployees.Controllers
             return Ok(employee);
         }
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId, [FromBody] EmployeeForCreationDTO employee)
         {
-            if (employee == null)
-            {
-                _logger.LogError("EmployeeForCreationDto object sent from client is null.");
-                return BadRequest("EmployeeForCreationDto object is null");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                _logger.LogError("Invalid model state for the EmployeeForCrationDTO object");
-                ModelState.AddModelError("Name", "Invalid Name.Try again");
-                return UnprocessableEntity(ModelState);
-            }
-
             var company =await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
             if (company == null)
             {
@@ -83,7 +70,6 @@ namespace CompanyEmployees.Controllers
 
             _repository.Employee.CreateEmployeeForCompany(companyId, employeeEntity);
             await _repository.SaveAsync();
-
             
            var employeeToReturn = _mapper.Map<EmployeeDTO>(employeeEntity);
             return CreatedAtRoute("GetEmployeeForCompany", new { companyId,id = employeeToReturn.Id }, employeeToReturn);
@@ -113,20 +99,9 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId,Guid id,[FromBody] EmployeeForUpdateDTO employee)
         {
-            if(employee == null)
-            {
-                _logger.LogError("EmployeeForUpdateDTO object sent from client is null");
-                return BadRequest("EmployeeForUpdateDTO object is null");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                _logger.LogError("Invalid model state for the EmployeeForUpdateDto object");
-                return UnprocessableEntity(ModelState);
-            }
-
             var company =await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
             if(company == null)
             {
@@ -149,12 +124,6 @@ namespace CompanyEmployees.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> PartiallyUpdateForCompany(Guid companyId,Guid id,[FromBody] JsonPatchDocument<EmployeeForUpdateDTO> patchDoc)
         {
-            if(patchDoc == null)
-            {
-                _logger.LogError("patchDoc object sent from client is null");
-                return BadRequest("pathDoc object is null");
-            }
-
             var company =await _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
             if(company == null)
             {
