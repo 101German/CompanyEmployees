@@ -37,9 +37,7 @@ namespace Repository
             }
         }
 
-        public void Save()
-        {
-            _repositoryContext.SaveChanges();
-        }
+        public async Task SaveAsync()=> await _repositoryContext.SaveChangesAsync();
+       
     }
 }
