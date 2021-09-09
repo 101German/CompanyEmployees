@@ -83,6 +83,7 @@ namespace CompanyEmployees.Controllers
 
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidateEmployeeForCompanyExistsAttribute))]
         public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId,Guid id,[FromBody] EmployeeForUpdateDTO employee)
         {
 
