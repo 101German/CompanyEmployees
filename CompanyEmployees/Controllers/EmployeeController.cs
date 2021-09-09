@@ -38,24 +38,17 @@ namespace CompanyEmployees.Controllers
             var employeesDTO = _mapper.Map<IEnumerable<EmployeeDTO>>(employeesFromDB);
             return Ok(employeesDTO);
         }
+
         [HttpGet("{id}", Name = "GetEmployeeForCompany")]
-        public async Task<IActionResult> GetEmployeeForCompany(Guid companyId, Guid id)
+        [ServiceFilter(typeof(ValidateEmployeeForCompanyExistsAttribute))]
+        public  IActionResult GetEmployeeForCompany(Guid companyId, Guid id)
         {
-            var company =await  _repository.Company.GetCompanyAsync(companyId, trackChanges: false);
-            if (company == null)
-            {
-                _logger.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
-            return NotFound();
-            }
-            var employeeDb =await _repository.Employee.GetEmployeeAsync(companyId, id, trackChanges:false);
-            if (employeeDb == null)
-            {
-                _logger.LogInfo($"Employee with id: {id} doesn't exist in the database.");
-                return NotFound();
-            }
+
+            var employeeDb = HttpContext.Items["employee"] as Employee;
             var employee = _mapper.Map<EmployeeDTO>(employeeDb);
             return Ok(employee);
         }
+
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId, [FromBody] EmployeeForCreationDTO employee)
@@ -101,6 +94,7 @@ namespace CompanyEmployees.Controllers
 
             return NoContent();
         }
+
         [HttpPatch("{id}")]
         [ServiceFilter(typeof(ValidateEmployeeForCompanyExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateForCompany(Guid companyId,Guid id,[FromBody] JsonPatchDocument<EmployeeForUpdateDTO> patchDoc)
