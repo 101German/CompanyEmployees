@@ -6,6 +6,7 @@ using Entities.Models;
 using Entities.RequestFeaters;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -36,6 +37,9 @@ namespace CompanyEmployees.Controllers
                 return NotFound();
             }
             var employeesFromDB =await _repository.Employee.GetEmployeesAsync(companyId,employeeParameters, trackChanges:false);
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(employeesFromDB.MetaData));
+
             var employeesDTO = _mapper.Map<IEnumerable<EmployeeDTO>>(employeesFromDB);
             return Ok(employeesDTO);
         }
