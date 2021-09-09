@@ -83,7 +83,6 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpPost("collection")]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateCompanyCollection([FromBody] IEnumerable<CompanyForCreationDTO> companyCollection)
         {
 
