@@ -3,6 +3,7 @@ using CompanyEmployees.ActionFilters;
 using Contracts;
 using Entities.DataTransferObfects;
 using Entities.Models;
+using Entities.RequestFeaters;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -26,7 +27,7 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetEmployees(Guid companyId)
+        public async Task<IActionResult> GetEmployees(Guid companyId,[FromQuery] EmployeeParameters employeeParameters)
         {
             var company =await _repository.Company.GetCompanyAsync(companyId, trackChanges:false);
             if (company == null)
@@ -34,7 +35,7 @@ namespace CompanyEmployees.Controllers
                 _logger.LogInfo($"Company with id: {companyId} doesn't exist in the  database.");
                 return NotFound();
             }
-            var employeesFromDB =await _repository.Employee.GetEmployeesAsync(companyId, trackChanges:false);
+            var employeesFromDB =await _repository.Employee.GetEmployeesAsync(companyId,employeeParameters, trackChanges:false);
             var employeesDTO = _mapper.Map<IEnumerable<EmployeeDTO>>(employeesFromDB);
             return Ok(employeesDTO);
         }
