@@ -1,11 +1,13 @@
 ﻿using CompanyEmployees.Formatter;
 using Contracts;
 using Entities;
+using Entities.DataTransferObfects;
 using LoggerService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Repository;
+using Repository.DataShaping;
 
 namespace CompanyEmployees.Extensions
 {
@@ -27,6 +29,10 @@ namespace CompanyEmployees.Extensions
 
         public static void ConfigureRepositoryManager(this IServiceCollection services) =>
             services.AddScoped<IRepositoryManager, RepositoryManager>();
+
+        public static void ConfigureDataShaper(this IServiceCollection services) =>
+            services.AddScoped<IDataShaper<EmployeeDTO>, DataShaper<EmployeeDTO>>();
+
         public static IMvcBuilder AddCustomCSVFormatter(this IMvcBuilder builder) =>
             builder.AddMvcOptions(config => config.OutputFormatters.Add(new CsvOutputFormatter()));
     }
