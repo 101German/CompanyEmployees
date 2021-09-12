@@ -8,5 +8,10 @@ namespace Entities.RequestFeaters
 
         public bool ValidAgeRange => MaxAge > MinAge;
         public string SearchTerm { get; set; }
+
+        public EmployeeParameters()
+        {
+            OrderBy = "name";
+        }
     }
 }
