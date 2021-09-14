@@ -53,5 +53,9 @@ namespace CompanyEmployees.Extensions
         {
             services.AddResponseCaching();
         }
+
+        public static void ConfigureHttpCachHeaders(this IServiceCollection services) =>
+            services.AddHttpCacheHeaders();
+             
     }
 }
