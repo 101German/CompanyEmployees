@@ -65,6 +65,7 @@ namespace CompanyEmployees
             
             app.ConfigureExceptionHandler(loggerManager);
             app.UseResponseCaching();
+            app.UseHttpCacheHeaders();
             app.UseRouting();
 
             app.UseHttpsRedirection();
