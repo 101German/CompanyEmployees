@@ -1,5 +1,4 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using CompanyEmployees.ActionFilters;
 using CompanyEmployees.ModelBinders;
 using Contracts;
@@ -17,6 +16,7 @@ namespace CompanyEmployees.Controllers
     [ApiVersion("1.0")]
     [Route("api/companies")]
     [ApiController]
+    [ResponseCache(CacheProfileName ="120SecondDuration")]
     public class CompaniesController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
@@ -40,7 +40,9 @@ namespace CompanyEmployees.Controllers
 
 
         }
+
         [HttpGet("{id}", Name = "CompanyById")]
+        [ResponseCache(Duration =60)]
         [ServiceFilter(typeof(ValidateCompanyExistsAttribute))]
         public  IActionResult GetCompany(Guid id)
         {
