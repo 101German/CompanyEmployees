@@ -52,6 +52,8 @@ namespace CompanyEmployees
             services.ConfigureVersioning();
             services.ConfigureResponseCaching();
             services.ConfigureHttpCachHeaders();
+            services.AddAuthentication();
+            services.ConfigureIdentity();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
