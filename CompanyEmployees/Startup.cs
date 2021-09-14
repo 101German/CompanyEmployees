@@ -35,6 +35,7 @@ namespace CompanyEmployees
             {
               config.RespectBrowserAcceptHeader = true;
               config.ReturnHttpNotAcceptable = true;
+              config.CacheProfiles.Add("120SecondDuration", new CacheProfile { Duration = 120 });
             }).AddNewtonsoftJson()
             .AddXmlDataContractSerializerFormatters()
             .AddCustomCSVFormatter();
@@ -49,6 +50,7 @@ namespace CompanyEmployees
             services.AddScoped<ValidateCompanyExistsAttribute>();
             services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
             services.ConfigureVersioning();
+            services.ConfigureResponseCaching();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,7 +61,9 @@ namespace CompanyEmployees
                 app.UseDeveloperExceptionPage();
             }
 
+            
             app.ConfigureExceptionHandler(loggerManager);
+            app.UseResponseCaching();
             app.UseRouting();
 
             app.UseHttpsRedirection();
