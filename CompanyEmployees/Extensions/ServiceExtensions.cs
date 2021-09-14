@@ -3,6 +3,7 @@ using Contracts;
 using Entities;
 using Entities.DataTransferObfects;
 using LoggerService;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
@@ -55,7 +56,17 @@ namespace CompanyEmployees.Extensions
         }
 
         public static void ConfigureHttpCachHeaders(this IServiceCollection services) =>
-            services.AddHttpCacheHeaders();
+            services.AddHttpCacheHeaders(
+                (expirationOpt)=>
+                {
+                    expirationOpt.MaxAge = 65;
+                    expirationOpt.CacheLocation = CacheLocation.Private;
+                },
+                (valodationOpt)=>
+                {
+                    valodationOpt.MustRevalidate = true;
+                }
+                );
              
     }
 }
