@@ -1,3 +1,4 @@
+using AuthService;
 using CompanyEmployees.ActionFilters;
 using CompanyEmployees.Extensions;
 using Contracts;
@@ -45,16 +46,19 @@ namespace CompanyEmployees
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+
             services.ConfigureDataShaper();
             services.AddScoped<ValidationFilterAttribute>();
             services.AddScoped<ValidateCompanyExistsAttribute>();
             services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
+            services.AddScoped<IAuthenticationManager, AuthenticationManager>();
             services.ConfigureVersioning();
             services.ConfigureResponseCaching();
             services.ConfigureHttpCachHeaders();
             services.AddAuthentication();
             services.ConfigureIdentity();
             services.ConfigureJWT(Configuration);
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
