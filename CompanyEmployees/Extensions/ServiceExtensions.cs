@@ -17,6 +17,7 @@ using Microsoft.OpenApi.Models;
 using Repository;
 using Repository.DataShaping;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace CompanyEmployees.Extensions
@@ -33,9 +34,9 @@ namespace CompanyEmployees.Extensions
         public static void ConfigureLoggerService(this IServiceCollection services) =>
            services.AddScoped<ILoggerManager, LoggerManager>();
 
-        public static void ConfigureSqlContext(this IServiceCollection services,IConfiguration configuration) =>
+        public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
            services.AddDbContext<RepositoryContext>(opts => opts.UseSqlServer(configuration.GetConnectionString("sqlConnection")
-               ,b=>b.MigrationsAssembly("CompanyEmployees")));
+               , b => b.MigrationsAssembly("CompanyEmployees")));
 
         public static void ConfigureRepositoryManager(this IServiceCollection services) =>
             services.AddScoped<IRepositoryManager, RepositoryManager>();
@@ -54,7 +55,7 @@ namespace CompanyEmployees.Extensions
                 opt.AssumeDefaultVersionWhenUnspecified = true;
                 opt.DefaultApiVersion = new ApiVersion(1, 0);
                 opt.ApiVersionReader = new HeaderApiVersionReader("api-version");
-            }); 
+            });
         }
 
         public static void ConfigureResponseCaching(this IServiceCollection services)
@@ -64,17 +65,17 @@ namespace CompanyEmployees.Extensions
 
         public static void ConfigureHttpCachHeaders(this IServiceCollection services) =>
             services.AddHttpCacheHeaders(
-                (expirationOpt)=>
+                (expirationOpt) =>
                 {
                     expirationOpt.MaxAge = 65;
                     expirationOpt.CacheLocation = CacheLocation.Private;
                 },
-                (valodationOpt)=>
+                (valodationOpt) =>
                 {
                     valodationOpt.MustRevalidate = true;
                 }
                 );
-             
+
         public static void ConfigureIdentity(this IServiceCollection services)
         {
             var builder = services.AddIdentityCore<User>(o =>
@@ -91,11 +92,12 @@ namespace CompanyEmployees.Extensions
             builder.AddEntityFrameworkStores<RepositoryContext>().AddDefaultTokenProviders();
         }
 
-        public static void ConfigureJWT(this IServiceCollection services,IConfiguration configuration)
+        public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
-            var secretKey = Environment.GetEnvironmentVariable("SECRET",EnvironmentVariableTarget.Machine);
-            services.AddAuthentication(opt => {
+            var secretKey = Environment.GetEnvironmentVariable("SECRET", EnvironmentVariableTarget.Machine);
+            services.AddAuthentication(opt =>
+            {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
@@ -109,18 +111,46 @@ namespace CompanyEmployees.Extensions
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings.GetSection("validIssuer").Value,
                     ValidAudience = jwtSettings.GetSection("validAudience").Value,
-                    IssuerSigningKey = new    SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
                 };
             });
         }
 
         public static void ConfigureSwagger(this IServiceCollection services)
         {
-            services.AddSwaggerGen(s=>
+            services.AddSwaggerGen(s =>
             {
                 s.SwaggerDoc("v1", new OpenApiInfo { Title = "CompanyEmployee API", Version = "v1" });
                 s.SwaggerDoc("v2", new OpenApiInfo { Title = "CompanyEmployee API", Version = "v2" });
+
+                s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Place to add JWT with Bearer",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+
+                });
+
+                s.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference =new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+                        Name = "Bearer",
+                    },
+                    new List<string>()
+                    }
+                }); 
             });
+
+
         }
     }
 }
