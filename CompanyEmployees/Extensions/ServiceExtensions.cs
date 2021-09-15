@@ -18,6 +18,8 @@ using Repository;
 using Repository.DataShaping;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace CompanyEmployees.Extensions
@@ -120,8 +122,31 @@ namespace CompanyEmployees.Extensions
         {
             services.AddSwaggerGen(s =>
             {
-                s.SwaggerDoc("v1", new OpenApiInfo { Title = "CompanyEmployee API", Version = "v1" });
+                s.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "CompanyEmployee API",
+                    Version = "v1",
+                    Description = "Company Employees API",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Gawin Balson",
+                        Email = "Gawin.Balson@gmail.com",
+                        Url = new Uri("https://twitter.com/gawinBB"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "CompanyEmployees API LICX",
+                        Url = new Uri("https://example.com/license"),
+                    }
+
+
+                });
                 s.SwaggerDoc("v2", new OpenApiInfo { Title = "CompanyEmployee API", Version = "v2" });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                s.IncludeXmlComments(xmlPath);
 
                 s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
